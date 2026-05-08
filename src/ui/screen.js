@@ -6,6 +6,8 @@ class Screen {
     this.screen = blessed.screen({ smartCSR: true });
     this.screen.title = 'TETRIS';
     this.screen.key(['C-c'], () => process.exit(0));
+    this.menuIndex = 0;
+    this.menuItems = [];
 
     this.main = blessed.box({
       left: 'center',
@@ -18,7 +20,35 @@ class Screen {
     this.screen.append(this.main);
   }
 
+  updateMenuSelection() {
+    this.menuItems.forEach((item, i) => {
+      if (i === this.menuIndex) {
+        item.setContent('> ' + item.label);
+        item.style.fg = 'yellow';
+        item.style.bold = true;
+      } else {
+        item.setContent('  ' + item.label);
+        item.style.fg = 'white';
+        item.style.bold = false;
+      }
+    });
+    this.screen.render();
+  }
+
+  hideMenu() {
+    this.screen.removeKey('tab');
+    this.screen.removeKey('enter');
+  }
+
+  hideGameOver() {
+    this.screen.removeKey('tab');
+    this.screen.removeKey('enter');
+  }
+
   showMenu() {
+    this.screen.removeKey('tab');
+    this.screen.removeKey('enter');
+    this.menuIndex = 0;
     this.main.destroy();
     this.main = blessed.box({
       left: 'center',
@@ -90,14 +120,45 @@ class Screen {
       parent: this.main,
       left: cx,
       top: 11,
-      content: '[ S ] START GAME',
-      style: { fg: 'green', bold: true }
+      content: '> START GAME',
+      style: { fg: 'white', bold: true }
+    });
+    this.startBtn.label = ' START GAME ';
+    this.startBtn.selectedBg = 'cyan';
+
+    this.quitBtn = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 12,
+      content: '  QUIT',
+      style: { fg: 'white' }
+    });
+    this.quitBtn.label = '    QUIT    ';
+    this.quitBtn.selectedBg = 'cyan';
+
+    this.menuItems = [this.startBtn, this.quitBtn];
+    this.menuIndex = 0;
+    this.updateMenuSelection();
+
+    this.screen.key(['tab'], () => {
+      this.menuIndex = (this.menuIndex + 1) % this.menuItems.length;
+      this.updateMenuSelection();
+    });
+
+    this.screen.key(['enter'], () => {
+      if (this.menuIndex === 0) {
+        this.hideMenu();
+        this.showGameUI();
+        if (this.onStart) this.onStart();
+      } else {
+        process.exit(0);
+      }
     });
 
     this.controlsTitle = blessed.text({
       parent: this.main,
       left: cx,
-      top: 14,
+      top: 15,
       content: '=== CONTROLS ===',
       style: { fg: 'grey' }
     });
@@ -105,49 +166,60 @@ class Screen {
     this.controlsInfo = blessed.text({
       parent: this.main,
       left: cx,
-      top: 15,
-      content: '< > v : Move | ^ : Rotate',
-      style: { fg: 'white' }
-    });
-
-    this.controlsInfo2 = blessed.text({
-      parent: this.main,
-      left: cx,
       top: 16,
-      content: 'SPACE : Hard Drop',
+      width: 22,
+      align: 'left',
+      content: '< > v    Move\n^        Rotate\nSPACE    Hard Drop\nP        Pause\nR        Restart',
       style: { fg: 'white' }
     });
-
-    this.controlsInfo3 = blessed.text({
-      parent: this.main,
-      left: cx,
-      top: 17,
-      content: 'P : Pause | R : Restart',
-      style: { fg: 'white' }
-    });
-
-    this.quitBtn = blessed.text({
-      parent: this.main,
-      left: cx,
-      top: 20,
-      content: '[ Q ] QUIT',
-      style: { fg: 'red' }
-    });
-
-    this.screen.key(['s', 'S'], () => {
-      this.hideMenu();
-      this.showGameUI();
-      if (this.onStart) this.onStart();
-    });
-
-    this.screen.key(['q', 'Q'], () => process.exit(0));
 
     this.screen.render();
   }
 
+updateMenuSelection() {
+    this.menuItems.forEach((item, i) => {
+      if (i === this.menuIndex) {
+        item.setContent('> ' + item.label);
+        item.style.bg = item.selectedBg || 'cyan';
+        item.style.fg = 'white';
+        item.style.bold = true;
+      } else {
+        item.setContent('  ' + item.label);
+        item.style.bg = '';
+        item.style.fg = 'white';
+        item.style.bold = false;
+      }
+    });
+    this.screen.render();
+  }
+
+  updateGameOverSelection() {
+    this.menuItems.forEach((item, i) => {
+      if (i === this.menuIndex) {
+        item.setContent('> ' + item.label);
+        item.style.bg = item.selectedBg || 'red';
+        item.style.fg = 'white';
+        item.style.bold = true;
+      } else {
+        item.setContent('  ' + item.label);
+        item.style.bg = '';
+        item.style.fg = 'white';
+        item.style.bold = false;
+      }
+    });
+    this.screen.render();
+  }
+
   hideMenu() {
-    this.screen.removeKey('s');
-    this.screen.removeKey('S');
+    this.screen.removeKey('tab');
+    this.screen.removeKey('enter');
+    this.menuIndex = 0;
+  }
+
+  hideGameOver() {
+    this.screen.removeKey('tab');
+    this.screen.removeKey('enter');
+    this.menuIndex = 0;
   }
 
   showGameUI() {
@@ -163,7 +235,7 @@ class Screen {
     this.gameBorder = blessed.box({
       parent: this.main,
       left: 0,
-      top: 0,
+      top: 2,
       width: 24,
       height: 22,
       border: { type: 'line', fg: 'cyan' }
@@ -172,7 +244,7 @@ class Screen {
     this.gameArea = blessed.text({
       parent: this.main,
       left: 1,
-      top: 1,
+      top: 3,
       width: 22,
       height: 20,
       tags: true
@@ -181,7 +253,7 @@ class Screen {
     this.sideBorder = blessed.box({
       parent: this.main,
       left: 24,
-      top: 0,
+      top: 2,
       width: 24,
       height: 22,
       border: { type: 'line', fg: 'yellow' }
@@ -190,7 +262,7 @@ class Screen {
     this.title = blessed.text({
       parent: this.main,
       left: 26,
-      top: 1,
+      top: 3,
       content: 'TETRIS',
       style: { fg: 'cyan', bold: true }
     });
@@ -198,56 +270,61 @@ class Screen {
     this.scoreLbl = blessed.text({
       parent: this.main,
       left: 26,
-      top: 3,
+      top: 5,
       content: 'Score: 0'
     });
 
     this.levelLbl = blessed.text({
       parent: this.main,
       left: 26,
-      top: 5,
+      top: 7,
       content: 'Level: 1'
     });
 
     this.linesLbl = blessed.text({
       parent: this.main,
       left: 26,
-      top: 7,
+      top: 9,
       content: 'Lines: 0'
     });
 
     this.nextLbl = blessed.text({
       parent: this.main,
       left: 26,
-      top: 10,
+      top: 12,
       content: 'Next:'
     });
 
     this.nextArea = blessed.text({
       parent: this.main,
       left: 26,
-      top: 11,
+      top: 13,
       width: 10,
       height: 6,
       tags: true
     });
 
-    this.msgLbl = blessed.text({
+    this.controls = blessed.text({
       parent: this.main,
       left: 26,
-      top: 18,
+      top: 16,
+      width: 20,
+      height: 6,
+      content: '^      Rotate\n< > v  Move\nSPACE  Drop\nP      Pause\nR      Restart\nEsc    Menu',
+      style: { fg: 'white' }
+    });
+
+    this.msgLbl = blessed.text({
+      parent: this.main,
+      left: 21,
+      top: 0,
+      width: 14,
+      align: 'center',
       content: '',
       style: { fg: 'red', bold: true }
     });
 
-    this.controls = blessed.text({
-      parent: this.main,
-      left: 0,
-      bottom: 0,
-      content: '< > ^ : Move | SPACE: Drop | P: Pause | R: Restart | Z: Menu'
-    });
-
-    this.screen.key(['z', 'Z'], () => {
+    this.screen.key(['escape', 'Escape'], () => {
       this.hideGameUI();
       this.showMenu();
     });
@@ -256,22 +333,29 @@ class Screen {
   }
 
   hideGameUI() {
-    this.main.remove(this.gameBorder);
-    this.main.remove(this.gameArea);
-    this.main.remove(this.sideBorder);
-    this.main.remove(this.title);
-    this.main.remove(this.scoreLbl);
-    this.main.remove(this.levelLbl);
-    this.main.remove(this.linesLbl);
-    this.main.remove(this.nextLbl);
-    this.main.remove(this.nextArea);
-    this.main.remove(this.msgLbl);
-    this.main.remove(this.controls);
-    this.screen.removeKey('z');
-    this.screen.removeKey('Z');
+    if (this.menuList) {
+      this.main.remove(this.menuList);
+      this.menuList = null;
+    }
+    if (this.gameBorder) this.main.remove(this.gameBorder);
+    if (this.gameArea) this.main.remove(this.gameArea);
+    if (this.sideBorder) this.main.remove(this.sideBorder);
+    if (this.title) this.main.remove(this.title);
+    if (this.scoreLbl) this.main.remove(this.scoreLbl);
+    if (this.levelLbl) this.main.remove(this.levelLbl);
+    if (this.linesLbl) this.main.remove(this.linesLbl);
+    if (this.nextLbl) this.main.remove(this.nextLbl);
+    if (this.nextArea) this.main.remove(this.nextArea);
+    if (this.msgLbl) this.main.remove(this.msgLbl);
+    if (this.controls) this.main.remove(this.controls);
+    this.screen.removeKey('escape');
+    this.screen.removeKey('Escape');
   }
 
   showGameOver(game, callback) {
+    this.screen.removeKey('tab');
+    this.screen.removeKey('enter');
+    this.menuIndex = 0;
     this.main.destroy();
     this.main = blessed.box({
       left: 'center',
@@ -415,36 +499,66 @@ class Screen {
       parent: this.main,
       left: cx,
       top: 24,
-      content: '[ R ] PLAY AGAIN',
-      style: { fg: 'green', bold: true }
+      content: '> PLAY AGAIN',
+      style: { fg: 'black', bold: true }
     });
+    this.overRestart.label = '  PLAY AGAIN   ';
+    this.overRestart.selectedBg = 'red';
 
     this.overMenu = blessed.text({
       parent: this.main,
       left: cx,
-      top: 26,
-      content: '[ Z ] BACK TO MENU',
-      style: { fg: 'red' }
+      top: 25,
+      content: '  BACK TO MENU',
+      style: { fg: 'white' }
+    });
+    this.overMenu.label = ' BACK TO MENU  ';
+    this.overMenu.selectedBg = 'red';
+
+    this.menuItems = [this.overRestart, this.overMenu];
+    this.menuIndex = 0;
+    this.updateGameOverSelection();
+
+    this.screen.key(['tab'], () => {
+      this.menuIndex = (this.menuIndex + 1) % this.menuItems.length;
+      this.updateGameOverSelection();
     });
 
-    this.screen.key(['r', 'R'], () => {
-      this.hideGameOver();
-      callback();
-    });
-
-    this.screen.key(['z', 'Z'], () => {
-      this.hideGameOver();
-      this.showMenu();
+    this.screen.key(['enter'], () => {
+      if (this.menuIndex === 0) {
+        this.hideGameOver();
+        callback();
+      } else {
+        this.hideGameOver();
+        this.showMenu();
+      }
     });
 
     this.screen.render();
   }
 
+  updateGameOverSelection() {
+    this.menuItems.forEach((item, i) => {
+      if (i === this.menuIndex) {
+        item.setContent('> ' + item.label);
+        item.style.fg = 'black';
+        item.style.bg = 'red';
+        item.style.bold = true;
+      } else {
+        item.setContent('  ' + item.label);
+        item.style.fg = 'white';
+        item.style.bg = '';
+        item.style.bold = false;
+      }
+    });
+    this.screen.render();
+  }
+
   hideGameOver() {
-    this.screen.removeKey('r');
-    this.screen.removeKey('R');
-    this.screen.removeKey('z');
-    this.screen.removeKey('Z');
+    this.screen.removeKey('a');
+    this.screen.removeKey('d');
+    this.screen.removeKey('enter');
+    this.menuIndex = 0;
   }
 
   setOnStart(callback) {
@@ -546,9 +660,7 @@ class Screen {
     }
     this.nextArea.setContent(next);
 
-    if (game.gameOver) {
-      this.msgLbl.setContent('GAME OVER!');
-    } else if (game.paused) {
+    if (game.paused) {
       this.msgLbl.setContent('PAUSED');
     } else {
       this.msgLbl.setContent('');
@@ -571,10 +683,9 @@ class Screen {
     return map[c] || 'white';
   }
 
-  setKeyHandler(handler) {
+setKeyHandler(handler) {
     this.screen.key(['left'], () => handler('left'));
     this.screen.key(['right'], () => handler('right'));
-    this.screen.key(['down'], () => handler('down'));
     this.screen.key(['up'], () => handler('rotate'));
     this.screen.key(['space'], () => handler('hardDrop'));
     this.screen.key(['r', 'R'], () => handler('restart'));

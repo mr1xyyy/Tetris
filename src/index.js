@@ -68,6 +68,15 @@ function startGameLoop() {
       game.tick();
       ui.draw(game);
     }
+    if (game && game.gameOver) {
+      clearInterval(gameLoopInterval);
+      ui.showGameOver(game, () => {
+        game = new Game();
+        ui.showGameUI();
+        startGameLoop();
+        ui.draw(game);
+      });
+    }
     if (game && game.speed !== lastSpeed) {
       lastSpeed = game.speed;
       startGameLoop();
