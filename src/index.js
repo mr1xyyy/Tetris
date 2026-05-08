@@ -5,11 +5,25 @@ let game = null;
 const ui = new Screen();
 let gameLoopInterval;
 
-ui.setOnStart(() => {
+function startNewGame() {
   game = new Game();
   ui.showGameUI();
   startGameLoop();
   ui.draw(game);
+}
+
+function returnToMenu() {
+  game = null;
+  ui.showMenu();
+}
+
+function showGameOverScreen() {
+  clearInterval(gameLoopInterval);
+  ui.showGameOver(game, startNewGame, returnToMenu);
+}
+
+ui.setOnStart(() => {
+  startNewGame();
 });
 
 ui.setKeyHandler((action) => {
@@ -41,20 +55,12 @@ ui.setKeyHandler((action) => {
       ui.draw(game);
       break;
     case 'restart':
-      game = new Game();
-      ui.showGameUI();
-      startGameLoop();
+      startNewGame();
       break;
   }
   
   if (game && game.gameOver) {
-    clearInterval(gameLoopInterval);
-    ui.showGameOver(game, () => {
-      game = new Game();
-      ui.showGameUI();
-      startGameLoop();
-      ui.draw(game);
-    });
+    showGameOverScreen();
   }
 });
 
@@ -69,13 +75,7 @@ function startGameLoop() {
       ui.draw(game);
     }
     if (game && game.gameOver) {
-      clearInterval(gameLoopInterval);
-      ui.showGameOver(game, () => {
-        game = new Game();
-        ui.showGameUI();
-        startGameLoop();
-        ui.draw(game);
-      });
+      showGameOverScreen();
     }
     if (game && game.speed !== lastSpeed) {
       lastSpeed = game.speed;
@@ -83,5 +83,3 @@ function startGameLoop() {
     }
   }, game ? game.speed : 600);
 }
-
-ui.showMenu();

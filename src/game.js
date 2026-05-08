@@ -95,18 +95,6 @@ class Game {
     this.paused = !this.paused;
   }
 
-  restart() {
-    this.board = createBoard();
-    this.piece = randomPiece();
-    this.nextPiece = randomPiece();
-    this.score = 0;
-    this.lines = 0;
-    this.level = 1;
-    this.gameOver = false;
-    this.paused = false;
-    this.speed = 600;
-  }
-
   tick() {
     if (this.gameOver || this.paused) return;
     this.drop();
