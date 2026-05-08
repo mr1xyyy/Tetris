@@ -75,7 +75,6 @@ src/
     view-builders.js
   game.js
   index.js
-headers.txt
 ```
 
 ## Архитектура
