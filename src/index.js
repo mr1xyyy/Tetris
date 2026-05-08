@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const Game = require('./game');
 const Screen = require('./ui/screen');
 
