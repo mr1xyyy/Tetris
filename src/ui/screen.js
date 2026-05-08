@@ -23,8 +23,8 @@ class Screen {
     this.main = blessed.box({
       left: 'center',
       top: 'center',
-      width: 50,
-      height: 25
+      width: 100,
+      height: 30
     });
     this.screen.append(this.main);
 
@@ -33,48 +33,56 @@ class Screen {
     this.menuTitle = blessed.text({
       parent: this.main,
       left: cx,
-      top: 4,
-      content: '  _____  _____  _     _ _____ ',
+      top: 3,
+      content: '███████╗███████╗████████╗██████╗ ██╗███████╗',
       style: { fg: 'cyan', bold: true }
     });
 
     this.menuTitle2 = blessed.text({
       parent: this.main,
       left: cx,
-      top: 5,
-      content: ' |_   _|| ____|| |   | ||_   _|',
+      top: 4,
+      content: '╚══██╔══╝██╔════╝╚══██╔══╝██╔══██╗██║██╔════╝',
       style: { fg: 'cyan', bold: true }
     });
 
     this.menuTitle3 = blessed.text({
       parent: this.main,
       left: cx,
-      top: 6,
-      content: '   | |  |  _| | |   | |  | |  ',
+      top: 5,
+      content: '   ██║   █████╗     ██║   ██████╔╝██║███████╗',
       style: { fg: 'cyan', bold: true }
     });
 
     this.menuTitle4 = blessed.text({
       parent: this.main,
       left: cx,
-      top: 7,
-      content: '   | |  | |___| |___| |  | |  ',
+      top: 6,
+      content: '   ██║   ██╔══╝     ██║   ██╔══██╗██║╚════██║',
       style: { fg: 'cyan', bold: true }
     });
 
     this.menuTitle5 = blessed.text({
       parent: this.main,
       left: cx,
+      top: 7,
+      content: '   ██║   ███████╗   ██║   ██║  ██║██║███████║',
+      style: { fg: 'cyan', bold: true }
+    });
+
+    this.menuTitle6 = blessed.text({
+      parent: this.main,
+      left: cx,
       top: 8,
-      content: '   |_|  |_____|_____|   |_|  ',
+      content: '   ╚═╝   ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝╚══════╝',
       style: { fg: 'cyan', bold: true }
     });
 
     this.divider = blessed.text({
       parent: this.main,
       left: cx,
-      top: 9,
-      content: '========================',
+      top: 10,
+      content: '========================================',
       style: { fg: 'grey' }
     });
 
@@ -236,10 +244,10 @@ class Screen {
       parent: this.main,
       left: 0,
       bottom: 0,
-      content: '< > ^ : Move | SPACE: Drop | P: Pause | R: Restart | Q: Quit'
+      content: '< > ^ : Move | SPACE: Drop | P: Pause | R: Restart | Z: Menu'
     });
 
-    this.screen.key(['q', 'Q'], () => {
+    this.screen.key(['z', 'Z'], () => {
       this.hideGameUI();
       this.showMenu();
     });
@@ -259,8 +267,8 @@ class Screen {
     this.main.remove(this.nextArea);
     this.main.remove(this.msgLbl);
     this.main.remove(this.controls);
-    this.screen.removeKey('q');
-    this.screen.removeKey('Q');
+    this.screen.removeKey('z');
+    this.screen.removeKey('Z');
   }
 
   showGameOver(game, callback) {
@@ -268,8 +276,8 @@ class Screen {
     this.main = blessed.box({
       left: 'center',
       top: 'center',
-      width: 50,
-      height: 25
+      width: 90,
+      height: 35
     });
     this.screen.append(this.main);
 
@@ -278,55 +286,111 @@ class Screen {
     this.overTitle = blessed.text({
       parent: this.main,
       left: cx,
-      top: 4,
-      content: '  _____   _____  _____  ___  ___ ',
-      style: { fg: 'red', bold: true }
+      top: 3,
+      content: ' ██████╗  █████╗ ███╗   ███╗███████╗',
+      style: { fg: 'red' }
     });
 
     this.overTitle2 = blessed.text({
       parent: this.main,
       left: cx,
-      top: 5,
-      content: ' |_   _| / ____|| ____||__T__|__T__|',
-      style: { fg: 'red', bold: true }
+      top: 4,
+      content: '██╔════╝ ██╔══██╗████╗ ████║██╔════╝',
+      style: { fg: 'red' }
     });
 
     this.overTitle3 = blessed.text({
       parent: this.main,
       left: cx,
-      top: 6,
-      content: '   | |  | |     |  _|    _|    _|  ',
-      style: { fg: 'red', bold: true }
+      top: 5,
+      content: '██║  ███╗███████║██╔████╔██║█████╗',
+      style: { fg: 'red' }
     });
 
     this.overTitle4 = blessed.text({
       parent: this.main,
       left: cx,
-      top: 7,
-      content: '   | |  | |___  | |___  |_|   |_| ',
-      style: { fg: 'red', bold: true }
+      top: 6,
+      content: '██║   ██║██╔══██║██║╚██╔╝██║██╔══╝',
+      style: { fg: 'red' }
     });
 
     this.overTitle5 = blessed.text({
       parent: this.main,
       left: cx,
+      top: 7,
+      content: '╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗',
+      style: { fg: 'red' }
+    });
+
+    this.overTitle6 = blessed.text({
+      parent: this.main,
+      left: cx,
       top: 8,
-      content: '   |_|   \\____| |_____| |_|   |_| ',
-      style: { fg: 'red', bold: true }
+      content: ' ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝',
+      style: { fg: 'red' }
+    });
+
+    this.overTitle7 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 10,
+      content: '██████╗ ██╗   ██╗███████╗██████╗',
+      style: { fg: 'red' }
+    });
+
+    this.overTitle8 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 11,
+      content: '██╔═══██╗██║   ██║██╔════╝██╔══██╗',
+      style: { fg: 'red' }
+    });
+
+    this.overTitle9 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 12,
+      content: '██║   ██║██║   ██║█████╗  ██████╔╝',
+      style: { fg: 'red' }
+    });
+
+    this.overTitle10 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 13,
+      content: '██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗',
+      style: { fg: 'red' }
+    });
+
+    this.overTitle11 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 14,
+      content: '╚██████╔╝ ╚████╔╝ ███████╗██║  ██║',
+      style: { fg: 'red' }
+    });
+
+    this.overTitle12 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 15,
+      content: ' ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝',
+      style: { fg: 'red' }
     });
 
     this.divider = blessed.text({
       parent: this.main,
       left: cx,
-      top: 10,
-      content: '========================',
+      top: 17,
+      content: '========================================',
       style: { fg: 'grey' }
     });
 
     this.overScore = blessed.text({
       parent: this.main,
       left: cx,
-      top: 12,
+      top: 19,
       content: 'Score: ' + game.score,
       style: { fg: 'white' }
     });
@@ -334,7 +398,7 @@ class Screen {
     this.overLevel = blessed.text({
       parent: this.main,
       left: cx,
-      top: 13,
+      top: 20,
       content: 'Level: ' + game.level,
       style: { fg: 'white' }
     });
@@ -342,7 +406,7 @@ class Screen {
     this.overLines = blessed.text({
       parent: this.main,
       left: cx,
-      top: 14,
+      top: 21,
       content: 'Lines: ' + game.lines,
       style: { fg: 'white' }
     });
@@ -350,7 +414,7 @@ class Screen {
     this.overRestart = blessed.text({
       parent: this.main,
       left: cx,
-      top: 17,
+      top: 24,
       content: '[ R ] PLAY AGAIN',
       style: { fg: 'green', bold: true }
     });
@@ -358,8 +422,8 @@ class Screen {
     this.overMenu = blessed.text({
       parent: this.main,
       left: cx,
-      top: 19,
-      content: '[ Q ] BACK TO MENU',
+      top: 26,
+      content: '[ Z ] BACK TO MENU',
       style: { fg: 'red' }
     });
 
@@ -368,7 +432,7 @@ class Screen {
       callback();
     });
 
-    this.screen.key(['q', 'Q'], () => {
+    this.screen.key(['z', 'Z'], () => {
       this.hideGameOver();
       this.showMenu();
     });
@@ -379,8 +443,8 @@ class Screen {
   hideGameOver() {
     this.screen.removeKey('r');
     this.screen.removeKey('R');
-    this.screen.removeKey('q');
-    this.screen.removeKey('Q');
+    this.screen.removeKey('z');
+    this.screen.removeKey('Z');
   }
 
   setOnStart(callback) {
