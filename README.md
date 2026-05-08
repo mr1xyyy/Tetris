@@ -24,10 +24,13 @@
 
 - рекомендуется `Node.js` 16+
 
-## Установка
+## 🚀 Установка через NPM
 
 ```bash
-npm install
+npm i -g @mr1xyyy/tetris-cli
+
+# Start it
+tetris
 ```
 
 ## Запуск
