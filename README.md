@@ -85,6 +85,3 @@ headers.txt
 - [src/ui/view-builders.js](/abs/path/d:/Projects/tetris-node/src/ui/view-builders.js): построение blessed-интерфейсов
 - [src/ui/render-utils.js](/abs/path/d:/Projects/tetris-node/src/ui/render-utils.js): helpers для рендера поля и следующей фигуры
 
-## Примечание
-
-В файле `headers.txt` хранятся текстовые заголовки для меню и экрана `game over`.
