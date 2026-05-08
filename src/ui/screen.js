@@ -5,7 +5,7 @@ class Screen {
   constructor() {
     this.screen = blessed.screen({ smartCSR: true });
     this.screen.title = 'TETRIS';
-    this.screen.key(['q', 'Q', 'C-c'], () => process.exit(0));
+    this.screen.key(['C-c'], () => process.exit(0));
 
     this.main = blessed.box({
       left: 'center',
@@ -14,36 +14,174 @@ class Screen {
       height: '100%'
     });
 
+    this.showMenu();
+    this.screen.append(this.main);
+  }
+
+  showMenu() {
+    this.main.destroy();
+    this.main = blessed.box({
+      left: 'center',
+      top: 'center',
+      width: 50,
+      height: 25
+    });
+    this.screen.append(this.main);
+
+    const cx = 'center';
+
+    this.menuTitle = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 4,
+      content: '  _____  _____  _     _ _____ ',
+      style: { fg: 'cyan', bold: true }
+    });
+
+    this.menuTitle2 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 5,
+      content: ' |_   _|| ____|| |   | ||_   _|',
+      style: { fg: 'cyan', bold: true }
+    });
+
+    this.menuTitle3 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 6,
+      content: '   | |  |  _| | |   | |  | |  ',
+      style: { fg: 'cyan', bold: true }
+    });
+
+    this.menuTitle4 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 7,
+      content: '   | |  | |___| |___| |  | |  ',
+      style: { fg: 'cyan', bold: true }
+    });
+
+    this.menuTitle5 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 8,
+      content: '   |_|  |_____|_____|   |_|  ',
+      style: { fg: 'cyan', bold: true }
+    });
+
+    this.divider = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 9,
+      content: '========================',
+      style: { fg: 'grey' }
+    });
+
+    this.startBtn = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 11,
+      content: '[ S ] START GAME',
+      style: { fg: 'green', bold: true }
+    });
+
+    this.controlsTitle = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 14,
+      content: '=== CONTROLS ===',
+      style: { fg: 'grey' }
+    });
+
+    this.controlsInfo = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 15,
+      content: '< > v : Move | ^ : Rotate',
+      style: { fg: 'white' }
+    });
+
+    this.controlsInfo2 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 16,
+      content: 'SPACE : Hard Drop',
+      style: { fg: 'white' }
+    });
+
+    this.controlsInfo3 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 17,
+      content: 'P : Pause | R : Restart',
+      style: { fg: 'white' }
+    });
+
+    this.quitBtn = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 20,
+      content: '[ Q ] QUIT',
+      style: { fg: 'red' }
+    });
+
+    this.screen.key(['s', 'S'], () => {
+      this.hideMenu();
+      this.showGameUI();
+      if (this.onStart) this.onStart();
+    });
+
+    this.screen.key(['q', 'Q'], () => process.exit(0));
+
+    this.screen.render();
+  }
+
+  hideMenu() {
+    this.screen.removeKey('s');
+    this.screen.removeKey('S');
+  }
+
+  showGameUI() {
+    this.main.destroy();
+    this.main = blessed.box({
+      left: 'center',
+      top: 'center',
+      width: 50,
+      height: 25
+    });
+    this.screen.append(this.main);
+
     this.gameBorder = blessed.box({
       parent: this.main,
       left: 0,
       top: 0,
-      width: WIDTH * 2 + 4,
-      height: HEIGHT + 2,
+      width: 24,
+      height: 22,
       border: { type: 'line', fg: 'cyan' }
     });
 
     this.gameArea = blessed.text({
       parent: this.main,
-      left: 2,
+      left: 1,
       top: 1,
-      width: WIDTH * 2 + 1,
-      height: HEIGHT,
+      width: 22,
+      height: 20,
       tags: true
     });
 
     this.sideBorder = blessed.box({
       parent: this.main,
-      left: WIDTH * 2 + 4,
+      left: 24,
       top: 0,
-      width: 20,
-      height: HEIGHT + 2,
+      width: 24,
+      height: 22,
       border: { type: 'line', fg: 'yellow' }
     });
 
     this.title = blessed.text({
       parent: this.main,
-      left: WIDTH * 2 + 6,
+      left: 26,
       top: 1,
       content: 'TETRIS',
       style: { fg: 'cyan', bold: true }
@@ -51,35 +189,35 @@ class Screen {
 
     this.scoreLbl = blessed.text({
       parent: this.main,
-      left: WIDTH * 2 + 6,
+      left: 26,
       top: 3,
       content: 'Score: 0'
     });
 
     this.levelLbl = blessed.text({
       parent: this.main,
-      left: WIDTH * 2 + 6,
+      left: 26,
       top: 5,
       content: 'Level: 1'
     });
 
     this.linesLbl = blessed.text({
       parent: this.main,
-      left: WIDTH * 2 + 6,
+      left: 26,
       top: 7,
       content: 'Lines: 0'
     });
 
     this.nextLbl = blessed.text({
       parent: this.main,
-      left: WIDTH * 2 + 6,
+      left: 26,
       top: 10,
       content: 'Next:'
     });
 
     this.nextArea = blessed.text({
       parent: this.main,
-      left: WIDTH * 2 + 6,
+      left: 26,
       top: 11,
       width: 10,
       height: 6,
@@ -88,7 +226,7 @@ class Screen {
 
     this.msgLbl = blessed.text({
       parent: this.main,
-      left: WIDTH * 2 + 6,
+      left: 26,
       top: 18,
       content: '',
       style: { fg: 'red', bold: true }
@@ -97,16 +235,161 @@ class Screen {
     this.controls = blessed.text({
       parent: this.main,
       left: 0,
-      bottom: 1,
-      content: 'Arrows: Move | SPACE: Drop | P: Pause | R: Restart | Q: Quit'
+      bottom: 0,
+      content: '< > ^ : Move | SPACE: Drop | P: Pause | R: Restart | Q: Quit'
     });
 
+    this.screen.key(['q', 'Q'], () => {
+      this.hideGameUI();
+      this.showMenu();
+    });
+
+    this.screen.render();
+  }
+
+  hideGameUI() {
+    this.main.remove(this.gameBorder);
+    this.main.remove(this.gameArea);
+    this.main.remove(this.sideBorder);
+    this.main.remove(this.title);
+    this.main.remove(this.scoreLbl);
+    this.main.remove(this.levelLbl);
+    this.main.remove(this.linesLbl);
+    this.main.remove(this.nextLbl);
+    this.main.remove(this.nextArea);
+    this.main.remove(this.msgLbl);
+    this.main.remove(this.controls);
+    this.screen.removeKey('q');
+    this.screen.removeKey('Q');
+  }
+
+  showGameOver(game, callback) {
+    this.main.destroy();
+    this.main = blessed.box({
+      left: 'center',
+      top: 'center',
+      width: 50,
+      height: 25
+    });
     this.screen.append(this.main);
+
+    const cx = 'center';
+
+    this.overTitle = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 4,
+      content: '  _____   _____  _____  ___  ___ ',
+      style: { fg: 'red', bold: true }
+    });
+
+    this.overTitle2 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 5,
+      content: ' |_   _| / ____|| ____||__T__|__T__|',
+      style: { fg: 'red', bold: true }
+    });
+
+    this.overTitle3 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 6,
+      content: '   | |  | |     |  _|    _|    _|  ',
+      style: { fg: 'red', bold: true }
+    });
+
+    this.overTitle4 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 7,
+      content: '   | |  | |___  | |___  |_|   |_| ',
+      style: { fg: 'red', bold: true }
+    });
+
+    this.overTitle5 = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 8,
+      content: '   |_|   \\____| |_____| |_|   |_| ',
+      style: { fg: 'red', bold: true }
+    });
+
+    this.divider = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 10,
+      content: '========================',
+      style: { fg: 'grey' }
+    });
+
+    this.overScore = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 12,
+      content: 'Score: ' + game.score,
+      style: { fg: 'white' }
+    });
+
+    this.overLevel = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 13,
+      content: 'Level: ' + game.level,
+      style: { fg: 'white' }
+    });
+
+    this.overLines = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 14,
+      content: 'Lines: ' + game.lines,
+      style: { fg: 'white' }
+    });
+
+    this.overRestart = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 17,
+      content: '[ R ] PLAY AGAIN',
+      style: { fg: 'green', bold: true }
+    });
+
+    this.overMenu = blessed.text({
+      parent: this.main,
+      left: cx,
+      top: 19,
+      content: '[ Q ] BACK TO MENU',
+      style: { fg: 'red' }
+    });
+
+    this.screen.key(['r', 'R'], () => {
+      this.hideGameOver();
+      callback();
+    });
+
+    this.screen.key(['q', 'Q'], () => {
+      this.hideGameOver();
+      this.showMenu();
+    });
+
+    this.screen.render();
+  }
+
+  hideGameOver() {
+    this.screen.removeKey('r');
+    this.screen.removeKey('R');
+    this.screen.removeKey('q');
+    this.screen.removeKey('Q');
+  }
+
+  setOnStart(callback) {
+    this.onStart = callback;
   }
 
   calcGhostY(board, piece) {
     let gy = piece.y;
-    while (gy < HEIGHT - 1) {
+    while (gy < HEIGHT - piece.shape.length) {
       let collides = false;
       for (let py = 0; py < piece.shape.length; py++) {
         for (let px = 0; px < piece.shape[py].length; px++) {
@@ -138,19 +421,25 @@ class Screen {
           color = game.board[y][x];
         }
 
-        const ghostY = this.calcGhostY(game.board, game.piece);
+        for (let py = 0; py < game.piece.shape.length; py++) {
+          for (let px = 0; px < game.piece.shape[py].length; px++) {
+            if (game.piece.shape[py][px]) {
+              const gy = game.getGhost().y + py;
+              const gx = game.piece.x + px;
+              if (y === gy && x === gx) {
+                filled = true;
+                color = 'ghost';
+              }
+            }
+          }
+        }
         
         for (let py = 0; py < game.piece.shape.length; py++) {
           for (let px = 0; px < game.piece.shape[py].length; px++) {
             if (game.piece.shape[py][px]) {
-              const currentY = game.piece.y + py;
-              const ghostCellY = ghostY + py;
-              
-              if (y === ghostCellY && x === game.piece.x + px && y < currentY) {
-                filled = true;
-                color = 'ghost';
-              }
-              if (y === currentY && x === game.piece.x + px) {
+              const cy = game.piece.y + py;
+              const cx = game.piece.x + px;
+              if (y === cy && x === cx) {
                 filled = true;
                 color = game.piece.color;
               }
@@ -159,8 +448,12 @@ class Screen {
         }
 
         if (filled && color) {
-          const c = this.getColorName(color);
-          content += '{' + c + '-bg}  {/}';
+          if (color === 'ghost') {
+            content += '{cyan-bg}  {/}';
+          } else {
+            const c = this.getColorName(color);
+            content += '{' + c + '-bg}  {/}';
+          }
         } else {
           content += '  ';
         }
@@ -209,7 +502,7 @@ class Screen {
       'J': 'blue',
       'S': 'green',
       'Z': 'red',
-      'ghost': 'gray'
+      'ghost': 'white'
     };
     return map[c] || 'white';
   }

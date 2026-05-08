@@ -1,11 +1,19 @@
 const Game = require('./game');
 const Screen = require('./ui/screen');
 
-let game = new Game();
+let game = null;
 const ui = new Screen();
+let gameLoopInterval;
+
+ui.setOnStart(() => {
+  game = new Game();
+  ui.showGameUI();
+  startGameLoop();
+  ui.draw(game);
+});
 
 ui.setKeyHandler((action) => {
-  if (game.gameOver && action !== 'restart') return;
+  if (!game || (game.gameOver && action !== 'restart')) return;
   
   switch (action) {
     case 'left':
@@ -34,25 +42,37 @@ ui.setKeyHandler((action) => {
       break;
     case 'restart':
       game = new Game();
+      ui.showGameUI();
+      startGameLoop();
       break;
+  }
+  
+  if (game && game.gameOver) {
+    clearInterval(gameLoopInterval);
+    ui.showGameOver(game, () => {
+      game = new Game();
+      ui.showGameUI();
+      startGameLoop();
+      ui.draw(game);
+    });
   }
 });
 
-let lastSpeed = game.speed;
+let lastSpeed = 600;
 
-function gameLoop() {
-  if (!game.paused && !game.gameOver) {
-    game.tick();
-    ui.draw(game);
-  }
+function startGameLoop() {
+  if (gameLoopInterval) clearInterval(gameLoopInterval);
+  lastSpeed = game ? game.speed : 600;
+  gameLoopInterval = setInterval(() => {
+    if (game && !game.paused && !game.gameOver) {
+      game.tick();
+      ui.draw(game);
+    }
+    if (game && game.speed !== lastSpeed) {
+      lastSpeed = game.speed;
+      startGameLoop();
+    }
+  }, game ? game.speed : 600);
 }
 
-setInterval(gameLoop, game.speed);
-
-setInterval(() => {
-  if (game.speed !== lastSpeed) {
-    lastSpeed = game.speed;
-  }
-}, 1000);
-
-ui.draw(game);
+ui.showMenu();

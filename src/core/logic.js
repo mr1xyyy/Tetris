@@ -31,14 +31,21 @@ function merge(board, piece) {
 }
 
 function clearLines(board) {
-  const newBoard = board.filter(row => row.some(cell => cell === 0));
-  const linesCleared = HEIGHT - newBoard.length;
+  const fullRows = [];
+  for (let y = 0; y < HEIGHT; y++) {
+    if (board[y].every(cell => cell !== 0)) {
+      fullRows.push(y);
+    }
+  }
+  
+  const newBoard = board.filter((_, i) => !fullRows.includes(i));
+  const linesCleared = fullRows.length;
   
   for (let i = 0; i < linesCleared; i++) {
     newBoard.unshift(Array(WIDTH).fill(0));
   }
   
-  return newBoard;
+  return { board: newBoard, lines: linesCleared };
 }
 
 function rotate(piece) {
@@ -49,15 +56,14 @@ function rotate(piece) {
 }
 
 function getGhostY(board, piece) {
-  let ghostY = piece.y;
-  const testPiece = { ...piece, y: ghostY + 1 };
-  
-  while (!collide(board, testPiece)) {
-    ghostY++;
-    testPiece.y = ghostY + 1;
+  let gy = piece.y;
+  while (true) {
+    const testPiece = { ...piece, y: gy + 1 };
+    if (collide(board, testPiece)) {
+      return gy;
+    }
+    gy++;
   }
-  
-  return ghostY;
 }
 
 module.exports = { collide, merge, clearLines, rotate, getGhostY };

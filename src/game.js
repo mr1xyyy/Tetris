@@ -48,8 +48,9 @@ class Game {
 
   mergeAndNext() {
     merge(this.board, this.piece);
-    const cleared = clearLines(this.board);
-    const linesCleared = HEIGHT - cleared.length;
+    const result = clearLines(this.board);
+    this.board = result.board;
+    const linesCleared = result.lines;
     
     if (linesCleared > 0) {
       this.lines += linesCleared;
@@ -58,7 +59,6 @@ class Game {
       this.speed = Math.max(50, 600 - (this.level - 1) * 50);
     }
     
-    this.board = cleared;
     this.piece = this.nextPiece;
     this.nextPiece = randomPiece();
 
