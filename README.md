@@ -76,14 +76,3 @@ src/
   game.js
   index.js
 ```
-
-## Архитектура
-
-- [src/index.js](/abs/path/d:/Projects/tetris-node/src/index.js): точка входа и игровой цикл
-- [src/game.js](/abs/path/d:/Projects/tetris-node/src/game.js): состояние игры и основная игровая логика
-- [src/core/logic.js](/abs/path/d:/Projects/tetris-node/src/core/logic.js): collision, merge, rotate и очистка линий
-- [src/core/pieces.js](/abs/path/d:/Projects/tetris-node/src/core/pieces.js): описание фигур Tetris
-- [src/ui/screen.js](/abs/path/d:/Projects/tetris-node/src/ui/screen.js): UI flow и обработка действий
-- [src/ui/view-builders.js](/abs/path/d:/Projects/tetris-node/src/ui/view-builders.js): построение blessed-интерфейсов
-- [src/ui/render-utils.js](/abs/path/d:/Projects/tetris-node/src/ui/render-utils.js): helpers для рендера поля и следующей фигуры
-
